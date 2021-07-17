@@ -3,17 +3,21 @@ package com.example.imstagram23back.service;
 
 import com.example.imstagram23back.domain.dto.LoginRequestDto;
 import com.example.imstagram23back.domain.dto.SignupRequestDto;
+import com.example.imstagram23back.domain.dto.TokenDto;
+import com.example.imstagram23back.domain.model.RefreshToken;
 import com.example.imstagram23back.domain.model.User;
 import com.example.imstagram23back.exception.ApiRequestException;
+import com.example.imstagram23back.repository.RefreshTokenRepository;
 import com.example.imstagram23back.repository.UserReposiotry;
-import com.example.imstagram23back.security.JwtTokenProvider;
+import com.example.imstagram23back.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,15 +29,22 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserReposiotry userReposiotry;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
 
 
     @Transactional
     public void registUser(SignupRequestDto requestDto){
         String email = requestDto.getEmail();
+
+        if (userReposiotry.existsByEmail(email)) {
+            throw new ApiRequestException("이미 가입되어 있는 유저입니다");
+        }
+
 
         if(email.isEmpty()) {
             throw new ApiRequestException("email(ID)를 입력해주세요");
@@ -77,22 +88,26 @@ public class UserService {
 
 
     @Transactional // 이거쓰는거맞낭
-    public Map<String, String> loginUser(LoginRequestDto requestDto){
-        User user = userReposiotry.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new ApiRequestException("가입되지 않은 email(ID)입니다.")
-        );
-        // 코드정리시삭제
-        System.out.println("user: "+ user.getPassword());
-        System.out.println("requestDto : "+ requestDto.getPassword());
+    public TokenDto loginUser(LoginRequestDto requestDto){
 
-        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
-            throw new ApiRequestException("잘못된 비밀번호입니다.");
-        }
+        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
+        UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
 
-        Map<String, String> map = new HashMap<>();
-        // ROLE필요없으면 여기도삭제하고 createToken도변경
-        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole());
-        map.put("jwt", token);
-        return map;
+        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
+        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        // 4. RefreshToken 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .key(authentication.getName())
+                .value(tokenDto.getRefreshToken())
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+
+        return tokenDto;
     }
 }
