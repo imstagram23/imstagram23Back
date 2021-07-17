@@ -33,16 +33,13 @@ public class PostController {
     // Post 생성
     @PostMapping(path="")
     public Map<String, Long> save(MultipartFile image, String content) {
+
         System.out.println(image);
-        System.out.println(content);
-
-        PostRequestDto requestDto = new PostRequestDto();
-
         String writer = "르탄이";
-        String imageUrl = s3Uploader.upload(image);
 
         Map<String, Long> map= new HashMap<>();
-        map.put("postId", postService.save(requestDto, writer, imageUrl));
+        map.put("postId", postService.save(image, writer, content));
+
         return map;
     }
 
@@ -50,6 +47,22 @@ public class PostController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         postService.delete(id);
+    }
+
+    // Post 수정
+    @PutMapping("/{id}")
+    public Map<String, Long> update(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
+        postService.update(id, requestDto);
+
+        Map<String, Long> map= new HashMap<>();
+        map.put("postId", id);
+        return map;
+    }
+
+    // Post 하나 조회
+    @GetMapping("/{id}")
+    public PostResponseDto getPost(@PathVariable Long id){
+        return postService.getPost(id);
     }
 
 

@@ -32,6 +32,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     // jwt 토큰
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+    // AWS S3 이미지
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-autoconfigure', version: '2.2.1.RELEASE'
+
+
 }
 
 test {

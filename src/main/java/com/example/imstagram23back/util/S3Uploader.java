@@ -18,6 +18,10 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.UUID;
 
+/*
+ * 2021-07-16 20:40 by 최민서
+ */
+
 @Component
 public class S3Uploader {
     private AmazonS3 s3Client;
@@ -58,7 +62,7 @@ public class S3Uploader {
             metadata.setContentType(image.getContentType());
 
             // PublicRead 권한으로 업로드 됨
-            s3Client.putObject(new PutObjectRequest(bucket, fileName, image.getInputStream(), metadata)
+            s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, image.getInputStream(), metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         }catch (IOException e){
             throw new ApiRequestException("이미지 업로드에 실패하였습니다.");
@@ -70,7 +74,7 @@ public class S3Uploader {
     public void delete(String imageUrl) {
 
         try {
-            s3Client.deleteObject(bucket, imageUrl.split("amazonaws.com/")[1]);
+            s3Client.deleteObject(bucket+"/post/image", imageUrl.split("amazonaws.com/")[1]);
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
         }

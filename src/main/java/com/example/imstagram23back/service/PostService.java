@@ -9,6 +9,7 @@ import com.example.imstagram23back.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,9 +36,21 @@ public class PostService {
 
     // Post 작성
     @Transactional
-    public Long save(PostRequestDto requestDto, String writer, String imageUrl){
-        Post post = new Post(requestDto, writer, imageUrl);
+    public Long save(MultipartFile image, String writer, String content){
+        isNullCheck(image, content);
+        String imageUrl = s3Uploader.upload(image);
+        Post post = new Post(writer, content, imageUrl);
+
         return postRepository.save(post).getPostId();
+    }
+
+    public void isNullCheck(MultipartFile image, String content){
+        if(image == null){
+            throw new ApiRequestException("이미지는 반드시 있어야합니다.");
+        }
+        if(content.isEmpty()){
+            throw new ApiRequestException("내용은 반드시 있어야합니다.");
+        }
     }
 
     // Post 삭제
@@ -48,5 +61,21 @@ public class PostService {
 
         postRepository.deleteById(id);
         s3Uploader.delete(post.getImageUrl());
+    }
+
+    // Post 수정
+    @Transactional
+    public void update(Long id, PostRequestDto requestDto){
+        Post post = postRepository.findById(id).orElseThrow(
+                ()-> new ApiRequestException("해당 게시물이 없습니다. id = "+id));
+        post.update(requestDto);
+    }
+
+    // Post 하나 조회
+    @Transactional
+    public PostResponseDto getPost(Long id){
+        Post post = postRepository.findById(id).orElseThrow(
+                ()-> new ApiRequestException("해당 게시물이 없습니다. id = "+id));
+        return new PostResponseDto(post);
     }
 }

@@ -2,6 +2,7 @@ package com.example.imstagram23back.domain.model;
 
 
 import com.example.imstagram23back.domain.dto.PostRequestDto;
+import com.example.imstagram23back.exception.ApiRequestException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,10 +33,17 @@ public class Post extends Timestamped {
     @Column(name="user_id")
     private String userId;
 
-    public Post(PostRequestDto requestDto, String writer, String imageUrl){
-        this.content = requestDto.getContent();
+    public Post(String writer, String content, String imageUrl){
+        this.content = content;
         this.userId = writer;
         this.imageUrl = imageUrl;
+    }
+
+    public void update(PostRequestDto requestDto){
+        if(requestDto.getContent().isEmpty()){
+            throw new ApiRequestException("내용은 반드시 있어야합니다.");
+        }
+        this.content = requestDto.getContent();
     }
 
 }
