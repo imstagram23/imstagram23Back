@@ -3,6 +3,7 @@ package com.example.imstagram23back.controller;
 
 import com.example.imstagram23back.domain.dto.LoginRequestDto;
 import com.example.imstagram23back.domain.dto.SignupRequestDto;
+import com.example.imstagram23back.domain.dto.TokenDto;
 import com.example.imstagram23back.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/api/login")
-    public Map<String, String> login(@RequestBody LoginRequestDto loginRequestDto){
+    public TokenDto login(@RequestBody LoginRequestDto loginRequestDto){
         return userService.loginUser(loginRequestDto);
     }
 }
