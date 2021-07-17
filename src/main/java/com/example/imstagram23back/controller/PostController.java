@@ -3,7 +3,6 @@ package com.example.imstagram23back.controller;
 import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
 import com.example.imstagram23back.service.PostService;
-import com.example.imstagram23back.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +21,6 @@ import java.util.Map;
 public class PostController {
 
     private final PostService postService;
-    private final S3Uploader s3Uploader;
 
     // Post 목록 최신순 조회
     @GetMapping("")
