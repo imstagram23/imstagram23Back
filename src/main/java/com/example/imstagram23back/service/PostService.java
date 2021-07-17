@@ -3,9 +3,10 @@ package com.example.imstagram23back.service;
 import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
 import com.example.imstagram23back.domain.model.Post;
+import com.example.imstagram23back.exception.ApiRequestException;
 import com.example.imstagram23back.repository.PostRepository;
+import com.example.imstagram23back.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final S3Uploader s3Uploader;
 
     // Post 목록 최신순 조회
     @Transactional
@@ -41,10 +43,10 @@ public class PostService {
     // Post 삭제
     @Transactional
     public void delete(Long id){
-        try {
-            postRepository.deleteById(id);
-        }catch (EmptyResultDataAccessException e){
-                throw new IllegalArgumentException("해당 게시물이 없습니다. id = "+id);
-        }
+        Post post = postRepository.findById(id).orElseThrow(
+                ()-> new ApiRequestException("해당 게시물이 없습니다. id = "+id));
+
+        postRepository.deleteById(id);
+        s3Uploader.delete(post.getImageUrl());
     }
 }
