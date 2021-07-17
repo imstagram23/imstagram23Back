@@ -3,10 +3,10 @@ package com.example.imstagram23back.controller;
 import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
 import com.example.imstagram23back.service.PostService;
+import com.example.imstagram23back.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.Map;
 public class PostController {
 
     private final PostService postService;
+    private final S3Uploader s3Uploader;
 
     // Post 목록 최신순 조회
     @GetMapping("")
@@ -30,13 +31,15 @@ public class PostController {
     }
 
     // Post 생성
-    @PostMapping("")
-    public Map<String, Long> save( @RequestBody PostRequestDto requestDto){
+    @PostMapping(path="")
+    public Map<String, Long> save(MultipartFile image, String content) {
+
+        System.out.println(image);
         String writer = "르탄이";
-        String imageUrl = "http://sssssss";
 
         Map<String, Long> map= new HashMap<>();
-        map.put("postId", postService.save(requestDto, writer, imageUrl));
+        map.put("postId", postService.save(image, writer, content));
+
         return map;
     }
 
@@ -44,6 +47,22 @@ public class PostController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         postService.delete(id);
+    }
+
+    // Post 수정
+    @PutMapping("/{id}")
+    public Map<String, Long> update(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
+        postService.update(id, requestDto);
+
+        Map<String, Long> map= new HashMap<>();
+        map.put("postId", id);
+        return map;
+    }
+
+    // Post 하나 조회
+    @GetMapping("/{id}")
+    public PostResponseDto getPost(@PathVariable Long id){
+        return postService.getPost(id);
     }
 
 
