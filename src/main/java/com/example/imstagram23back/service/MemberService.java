@@ -6,10 +6,10 @@ import com.example.imstagram23back.domain.dto.SignupRequestDto;
 import com.example.imstagram23back.domain.dto.TokenDto;
 import com.example.imstagram23back.domain.dto.TokenRequestDto;
 import com.example.imstagram23back.domain.model.RefreshToken;
-import com.example.imstagram23back.domain.model.User;
+import com.example.imstagram23back.domain.model.Member;
 import com.example.imstagram23back.exception.ApiRequestException;
 import com.example.imstagram23back.repository.RefreshTokenRepository;
-import com.example.imstagram23back.repository.UserReposiotry;
+import com.example.imstagram23back.repository.MemberRepository;
 import com.example.imstagram23back.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,10 +28,10 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class MemberService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final UserReposiotry userReposiotry;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -39,10 +39,10 @@ public class UserService {
 
 
     @Transactional
-    public void registUser(SignupRequestDto requestDto){
+    public void registMember(SignupRequestDto requestDto){
         String email = requestDto.getEmail();
 
-        if (userReposiotry.existsByEmail(email)) {
+        if (memberRepository.existsByEmail(email)) {
             throw new ApiRequestException("이미 가입되어 있는 유저입니다");
         }
 
@@ -57,7 +57,7 @@ public class UserService {
         }
 
         // 회원 email(ID)중복확인
-        Optional<User> found = userReposiotry.findByEmail(email);
+        Optional<Member> found = memberRepository.findByEmail(email);
         if (found.isPresent()) {
             throw new ApiRequestException("중복된 사용자 email(ID)가 존재합니다.");
         }
@@ -80,8 +80,8 @@ public class UserService {
         // 인코딩된거 안넣어주면 오류나서 이렇게했음
         requestDto.setPassword(password);
 
-        User user = new User(requestDto);
-        userReposiotry.save(user);
+        Member member = new Member(requestDto);
+        memberRepository.save(member);
 
         // 코드정리시 삭제
         System.out.println("유저 생성완료");
@@ -89,7 +89,7 @@ public class UserService {
 
 
     @Transactional // 이거쓰는거맞낭
-    public TokenDto loginUser(LoginRequestDto requestDto){
+    public TokenDto loginMember(LoginRequestDto requestDto){
 
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();

@@ -4,6 +4,8 @@ import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
 import com.example.imstagram23back.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +26,7 @@ public class PostController {
 
     // Post 목록 최신순 조회
     @GetMapping("")
-    public List<PostResponseDto> getPostList(){
+    public List<PostResponseDto> getPostList(@AuthenticationPrincipal UserDetails userDetails){
         return postService.getPostList();
     }
 

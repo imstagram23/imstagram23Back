@@ -11,9 +11,9 @@ import javax.persistence.*;
 @Getter // get 함수를 일괄적으로 만들어줍니다.
 @NoArgsConstructor // 기본 생성자를 만들어줍니다.
 @Entity // DB 테이블 역할을 합니다.
-public class User  {
+public class Member {
 
-    public User(String email, String password, String nickname, UserRole role ) {
+    public Member(String email, String password, String nickname, MemberRole role ) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -21,11 +21,11 @@ public class User  {
 //        this.kakaoId = null;
     }
 
-    public User(SignupRequestDto requestDto){
+    public Member(SignupRequestDto requestDto){
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();
         this.nickname = requestDto.getNickname();
-        this.role = UserRole.USER;
+        this.role = MemberRole.USER;
     }
 
 //    public User(String username, String password, String email, Long kakaoId) {
@@ -38,7 +38,7 @@ public class User  {
     // ID가 자동으로 생성 및 증가합니다.
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    private Long userId;
+    private Long memberId;
 
     @Column(nullable = false)
     private String email;
@@ -52,7 +52,7 @@ public class User  {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private UserRole role;
+    private MemberRole role;
 
 //    @Column(nullable = true)
 //    private Long kakaoId;
