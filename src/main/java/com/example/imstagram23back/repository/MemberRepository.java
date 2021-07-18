@@ -1,11 +1,11 @@
 package com.example.imstagram23back.repository;
 
-import com.example.imstagram23back.domain.model.User;
+import com.example.imstagram23back.domain.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserReposiotry extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+public interface MemberRepository extends JpaRepository<Member, Long> {
+    Optional<Member> findByEmail(String email);
     boolean existsByEmail(String email);
 }
