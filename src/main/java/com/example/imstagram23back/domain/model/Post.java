@@ -6,10 +6,7 @@ import com.example.imstagram23back.exception.ApiRequestException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /*
  * 2021-07-16 20:40 by 최민서
@@ -30,13 +27,14 @@ public class Post extends Timestamped {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name="user_id")
-    private String userId;
+    @ManyToOne
+    @JoinColumn
+    private Member member;
 
-    public Post(String writer, String content, String imageUrl){
+    public Post(String content, String imageUrl, Member member){
         this.content = content;
-        this.userId = writer;
         this.imageUrl = imageUrl;
+        this.member = member;
     }
 
     public void update(PostRequestDto requestDto){

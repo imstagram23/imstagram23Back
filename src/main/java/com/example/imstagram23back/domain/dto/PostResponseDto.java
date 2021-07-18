@@ -20,7 +20,7 @@ public class PostResponseDto {
 
     public PostResponseDto(Post post) {
         this.postId = post.getPostId();
-        this.writer = post.getUserId();
+        this.writer = post.getMember().getNickname();
         this.content = post.getContent();
         this.imageUrl = post.getImageUrl();
         this.createdAt = post.getCreatedAt();
