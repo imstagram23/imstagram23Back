@@ -27,7 +27,7 @@ public class Post extends Timestamped {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Member member;
 
