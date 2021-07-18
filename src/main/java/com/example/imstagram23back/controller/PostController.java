@@ -26,33 +26,30 @@ public class PostController {
 
     // Post 목록 최신순 조회
     @GetMapping("")
-    public List<PostResponseDto> getPostList(@AuthenticationPrincipal UserDetails userDetails){
+    public List<PostResponseDto> getPostList(){
         return postService.getPostList();
     }
 
     // Post 생성
     @PostMapping(path="")
-    public Map<String, Long> save(MultipartFile image, String content) {
-
-        System.out.println(image);
-        String writer = "르탄이";
+    public Map<String, Long> save(MultipartFile image, String content, @AuthenticationPrincipal UserDetails userDetails) {
 
         Map<String, Long> map= new HashMap<>();
-        map.put("postId", postService.save(image, writer, content));
+        map.put("postId", postService.save(image, content, userDetails.getUsername()));
 
         return map;
     }
 
     // Post 삭제
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
-        postService.delete(id);
+    public void delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+        postService.delete(id, userDetails.getUsername());
     }
 
     // Post 수정
     @PutMapping("/{id}")
-    public Map<String, Long> update(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
-        postService.update(id, requestDto);
+    public Map<String, Long> update(@PathVariable Long id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+        postService.update(id, requestDto, userDetails.getUsername());
 
         Map<String, Long> map= new HashMap<>();
         map.put("postId", id);

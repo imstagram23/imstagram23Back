@@ -35,7 +35,7 @@ public class TestDataRunner implements ApplicationRunner {
         memberRepository.save(testMember1);
 
 
-        Post postTest1 = new Post("작가1","내용1","http://내용내용");
+        Post postTest1 = new Post("작가1","내용1",testMember1);
         postRepository.save(postTest1);
 
 
