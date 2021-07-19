@@ -24,7 +24,6 @@ public class CorsConfig {
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("FETCH");
 
         config.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
         // 모든 api/** 주소는 이 config 설정을 따라간다.

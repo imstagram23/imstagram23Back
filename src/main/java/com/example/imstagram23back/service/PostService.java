@@ -130,6 +130,8 @@ public class PostService {
             throw new ApiRequestException("자신이 쓴 게시글만 수정할 수 있습니다.");
         }
 
+        // 게시글과 연관된 댓글 먼저 삭제
+        commentRepository.deleteAllByPost(post);
         // 게시글 삭제
         postRepository.deleteById(id);
         // S3에 업로드했던 이미지도 삭제
