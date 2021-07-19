@@ -2,6 +2,7 @@ package com.example.imstagram23back.controller;
 
 import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
+import com.example.imstagram23back.domain.dto.PostResponseDto2;
 import com.example.imstagram23back.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,13 @@ public class PostController {
     public List<PostResponseDto> getPostList(){
         return postService.getPostList();
     }
+
+    @GetMapping("/cwg")
+    public List<PostResponseDto2> getPostList2(@AuthenticationPrincipal UserDetails userDetails){
+        return postService.getPostList2(userDetails.getUsername());
+    }
+
+
 
     // Post 생성
     @PostMapping(path="")
