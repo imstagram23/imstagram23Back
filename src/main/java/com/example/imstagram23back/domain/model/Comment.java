@@ -32,17 +32,23 @@ public class Comment extends Timestamped {
     private Post post;
 
     public Comment(CommentRequestDto requestDto, Member member, Post post){
-        if(requestDto.getContent().isEmpty()){
-            throw new ApiRequestException("내용은 반드시 있어야합니다.");
-        }
+        nullcheck(requestDto);
+
         this.content = requestDto.getContent();
         this.member = member;
         this.post = post;
-
     }
 
     public void update(CommentRequestDto requestDto){
-        this.content = requestDto.getContent();
+        nullcheck(requestDto);
 
+        this.content = requestDto.getContent();
+    }
+
+    public void nullcheck(CommentRequestDto requestDto){
+
+        if(requestDto.getContent().isEmpty()){
+            throw new ApiRequestException("내용은 반드시 있어야합니다.");
+        }
     }
 }
