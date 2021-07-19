@@ -18,4 +18,7 @@ public interface HeartLikeRepository extends JpaRepository<HeartLike, Long> {
     // 좋아요 총개수를 위한거
     List<HeartLike> findAllByPost(Post post); // 이것말고 countByPost사용하기로함
     Long countByPost(Post post);
+
+    // 게시글 삭제시 좋아요에있는것도 삭제하기위해서
+    Long deleteByPost(Post post);
 }
