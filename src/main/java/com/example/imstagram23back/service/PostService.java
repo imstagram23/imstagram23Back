@@ -6,6 +6,7 @@ import com.example.imstagram23back.domain.dto.PostResponseDto2;
 import com.example.imstagram23back.domain.model.Member;
 import com.example.imstagram23back.domain.model.Post;
 import com.example.imstagram23back.exception.ApiRequestException;
+import com.example.imstagram23back.repository.CommentRepository;
 import com.example.imstagram23back.repository.HeartLikeRepository;
 import com.example.imstagram23back.repository.MemberRepository;
 import com.example.imstagram23back.repository.PostRepository;
@@ -31,6 +32,7 @@ public class PostService {
     private final S3Uploader s3Uploader;
     private final MemberRepository memberRepository;
     private final HeartLikeRepository heartLikeRepository;
+    private final CommentRepository commentRepository;
 
     // Post 목록 최신순 조회
     @Transactional
@@ -56,11 +58,12 @@ public class PostService {
             Post post = postList.get(i);
 //            List<HeartLike> heartLikeList = heartLikeRepository.findAllByPost(post);
             Long hearLikeTotal = heartLikeRepository.countByPost(post);
+            Long totalComment = commentRepository.countByPost(post);
 
             if(isAlreadLikeCheck(member, post)){
-                result.add(new PostResponseDto2(post, true, hearLikeTotal)); // heartLikeList.size() -> hearLikeTotal
+                result.add(new PostResponseDto2(post, true, hearLikeTotal, totalComment)); // heartLikeList.size() -> hearLikeTotal
             }else{
-                result.add(new PostResponseDto2(post, false, hearLikeTotal));
+                result.add(new PostResponseDto2(post, false, hearLikeTotal, totalComment));
             }
         }
         return result;
