@@ -56,15 +56,12 @@ public class PostService {
 
         for(int i = 0 ; i< postList.size() ; i++){
             Post post = postList.get(i);
-//            List<HeartLike> heartLikeList = heartLikeRepository.findAllByPost(post);
+
             Long hearLikeTotal = heartLikeRepository.countByPost(post);
             Long totalComment = commentRepository.countByPost(post);
 
-            if(isAlreadLikeCheck(member, post)){
-                result.add(new PostResponseDto2(post, true, hearLikeTotal, totalComment)); // heartLikeList.size() -> hearLikeTotal
-            }else{
-                result.add(new PostResponseDto2(post, false, hearLikeTotal, totalComment));
-            }
+            result.add(new PostResponseDto2(post,  hearLikeTotal, totalComment,
+                    isAlreadLikeCheck(member, post), checkCreateMember(member.getEmail(), post)));
         }
         return result;
     }
@@ -72,6 +69,15 @@ public class PostService {
     // 계속 조회하는거라 비효율적이라 생각함 다른방법을 생각해보자.
     private boolean isAlreadLikeCheck(Member member, Post post ){
         return heartLikeRepository.findByMemberAndPost(member, post).isPresent();
+    }
+
+    // 글자기가 쓴건지 확인하는거
+    private boolean checkCreateMember(String memberEmail, Post post){
+        if(memberEmail.equals(post.getMember().getEmail())){
+            return true;
+        } else{
+            return false;
+        }
     }
 
 

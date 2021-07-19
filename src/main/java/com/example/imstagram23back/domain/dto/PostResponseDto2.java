@@ -15,11 +15,12 @@ public class PostResponseDto2 {
     private String imageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private boolean heartLike;
     private Long totalLike; // int -> long
     private Long totalComment;
+    private boolean heartLike;
+    private boolean checkMember;
 
-    public PostResponseDto2(Post post, boolean heartLike, Long totalLike, Long totalComment ) { // int -> long
+    public PostResponseDto2(Post post, Long totalLike, Long totalComment, boolean heartLike, boolean checkMember ) { // int -> long
         this.postId = post.getPostId();
         this.content = post.getContent();
         this.imageUrl = post.getImageUrl();
@@ -29,5 +30,6 @@ public class PostResponseDto2 {
         this.heartLike = heartLike;
         this.totalLike = totalLike;
         this.totalComment = totalComment;
+        this.checkMember = checkMember;
     }
 }

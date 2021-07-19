@@ -37,13 +37,13 @@ public class TestDataRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Member testMember1 = new Member("test1@naver.com","12345","테스트1", MemberRole.USER);
+        Member testMember1 = new Member("test1@naver.com",passwordEncoder.encode("12345"),"테스트1", MemberRole.USER);
         memberRepository.save(testMember1);
 
-        Member testMember2 = new Member("test2@naver.com","12345","테스트2", MemberRole.USER);
+        Member testMember2 = new Member("test2@naver.com",passwordEncoder.encode("12345"),"테스트2", MemberRole.USER);
         memberRepository.save(testMember2);
 
-        Member testMember3 = new Member("test3@naver.com","12345","테스트3", MemberRole.USER);
+        Member testMember3 = new Member("test3@naver.com",passwordEncoder.encode("12345"),"테스트3", MemberRole.USER);
         memberRepository.save(testMember3);
 
 
