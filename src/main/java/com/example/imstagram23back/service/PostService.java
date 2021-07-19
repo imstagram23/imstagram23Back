@@ -2,9 +2,11 @@ package com.example.imstagram23back.service;
 
 import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
+import com.example.imstagram23back.domain.dto.PostResponseDto2;
 import com.example.imstagram23back.domain.model.Member;
 import com.example.imstagram23back.domain.model.Post;
 import com.example.imstagram23back.exception.ApiRequestException;
+import com.example.imstagram23back.repository.HeartLikeRepository;
 import com.example.imstagram23back.repository.MemberRepository;
 import com.example.imstagram23back.repository.PostRepository;
 import com.example.imstagram23back.util.S3Uploader;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final S3Uploader s3Uploader;
     private final MemberRepository memberRepository;
+    private final HeartLikeRepository heartLikeRepository;
 
     // Post 목록 최신순 조회
     @Transactional
@@ -36,6 +40,39 @@ public class PostService {
                 .map(post -> new PostResponseDto(post))
                 .collect(Collectors.toList());
     }
+
+    // 최왕규
+    // 총 좋아요 개수도 반환해줄가
+    @Transactional
+    public List<PostResponseDto2> getPostList2(String userEmail){
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ApiRequestException("좋아요에서 글 불러올때 정확하지않은 이메일")
+        );
+
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+        List<PostResponseDto2> result = new ArrayList<>();
+
+        for(int i = 0 ; i< postList.size() ; i++){
+            Post post = postList.get(i);
+//            List<HeartLike> heartLikeList = heartLikeRepository.findAllByPost(post);
+            Long hearLikeTotal = heartLikeRepository.countByPost(post);
+
+            if(isAlreadLikeCheck(member, post)){
+                result.add(new PostResponseDto2(post, true, hearLikeTotal)); // heartLikeList.size() -> hearLikeTotal
+            }else{
+                result.add(new PostResponseDto2(post, false, hearLikeTotal));
+            }
+        }
+        return result;
+    }
+
+    // 계속 조회하는거라 비효율적이라 생각함 다른방법을 생각해보자.
+    private boolean isAlreadLikeCheck(Member member, Post post ){
+        return heartLikeRepository.findByMemberAndPost(member, post).isPresent();
+    }
+
+
+
 
     // Post 작성
     @Transactional
