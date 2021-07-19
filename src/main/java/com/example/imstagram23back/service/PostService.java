@@ -132,8 +132,13 @@ public class PostService {
 
         // 게시글과 연관된 댓글 먼저 삭제
         commentRepository.deleteAllByPost(post);
+
+        // 좋아요 한그것도 삭제를 시켜줘야지 - 순서가중요
+        heartLikeRepository.deleteByPost(post);
+
         // 게시글 삭제
         postRepository.deleteById(id);
+
         // S3에 업로드했던 이미지도 삭제
         s3Uploader.delete(post.getImageUrl());
     }
