@@ -9,12 +9,14 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
 import com.example.imstagram23back.exception.ApiRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -59,15 +61,22 @@ public class S3Uploader {
         try {
             // set metadata
             ObjectMetadata metadata = new ObjectMetadata();
+            // content type 지정
             metadata.setContentType(image.getContentType());
 
+            // No content length warn 로그 출력, content length 지정
+            byte[] bytes = IOUtils.toByteArray(image.getInputStream());
+            metadata.setContentLength(bytes.length);
+
+            ByteArrayInputStream byteArray = new ByteArrayInputStream(bytes);
+
             // PublicRead 권한으로 업로드 됨
-            s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, image.getInputStream(), metadata)
+            s3Client.putObject(new PutObjectRequest(bucket+"/post/image", fileName, byteArray, metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         }catch (IOException e){
             throw new ApiRequestException("이미지 업로드에 실패하였습니다.");
         }
-        return s3Client.getUrl(bucket, fileName).toString();
+        return s3Client.getUrl(bucket+"/post/image", fileName).toString();
     }
 
     // S3에 이미지 파일 삭제
