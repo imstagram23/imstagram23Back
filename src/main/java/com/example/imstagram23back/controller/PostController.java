@@ -27,11 +27,6 @@ public class PostController {
 
     // Post 목록 최신순 조회
     @GetMapping("")
-    public List<PostResponseDto> getPostList(){
-        return postService.getPostList();
-    }
-
-    @GetMapping("/cwg")
     public List<PostResponseDto2> getPostList2(@AuthenticationPrincipal UserDetails userDetails){
         return postService.getPostList2(userDetails.getUsername());
     }
@@ -40,28 +35,26 @@ public class PostController {
 
     // Post 생성
     @PostMapping(path="")
-    public Map<String, Long> save(MultipartFile image, String content, @AuthenticationPrincipal UserDetails userDetails) {
+    public PostResponseDto save(MultipartFile image, String content, @AuthenticationPrincipal UserDetails userDetails) {
 
-        Map<String, Long> map= new HashMap<>();
-        map.put("postId", postService.save(image, content, userDetails.getUsername()));
-
-        return map;
+        return postService.save(image, content, userDetails.getUsername());
     }
 
     // Post 삭제
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+    public Map<String, Long> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
         postService.delete(id, userDetails.getUsername());
-    }
-
-    // Post 수정
-    @PutMapping("/{id}")
-    public Map<String, Long> update(@PathVariable Long id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
-        postService.update(id, requestDto, userDetails.getUsername());
 
         Map<String, Long> map= new HashMap<>();
         map.put("postId", id);
         return map;
+    }
+
+    // Post 수정
+    @PutMapping("/{id}")
+    public PostResponseDto update(@PathVariable Long id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+
+        return postService.update(id, requestDto, userDetails.getUsername());
     }
 
     // Post 하나 조회
