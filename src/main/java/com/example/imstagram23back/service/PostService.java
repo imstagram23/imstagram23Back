@@ -85,7 +85,7 @@ public class PostService {
 
     // Post 작성
     @Transactional
-    public Long save(MultipartFile image, String content, String userEmail){
+    public PostResponseDto save(MultipartFile image, String content, String userEmail){
         isNullCheck(image, content);
 
         // 유저 확인
@@ -98,7 +98,7 @@ public class PostService {
 
         // post 저장
         Post post = new Post(content, imageUrl, member);
-        return postRepository.save(post).getPostId();
+        return new PostResponseDto(postRepository.save(post));
     }
 
     // 게시글 내용과 이미지가 있는지 확인
@@ -145,7 +145,7 @@ public class PostService {
 
     // Post 수정
     @Transactional
-    public void update(Long id, PostRequestDto requestDto, String userEmail){
+    public PostResponseDto update(Long id, PostRequestDto requestDto, String userEmail){
         // 게시글 조회
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new ApiRequestException("해당 게시물이 없습니다. id = "+id));
@@ -159,9 +159,9 @@ public class PostService {
         if (!post.getMember().equals(member)) {
             throw new ApiRequestException("자신이 쓴 게시글만 수정할 수 있습니다.");
         }
-
-        // 게시글 수정
         post.update(requestDto);
+        // 게시글 수정
+        return new PostResponseDto(post);
     }
 
     // Post 하나 조회
