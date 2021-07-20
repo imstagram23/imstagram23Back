@@ -37,7 +37,6 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
 
-
     @Transactional
     public void registMember(SignupRequestDto requestDto){
         String email = requestDto.getEmail();
@@ -46,34 +45,11 @@ public class MemberService {
             throw new ApiRequestException("이미 가입되어 있는 유저입니다");
         }
 
-
-        if(email.isEmpty()) {
-            throw new ApiRequestException("email(ID)를 입력해주세요");
-        }
-
-        // email형식인지 확인하는 정규식 넣기
-        if(!requestDto.getEmail().matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$")){
-            throw new ApiRequestException("올바른 이메일 형식이 아닙니다.");
-        }
-
         // 회원 email(ID)중복확인
         Optional<Member> found = memberRepository.findByEmail(email);
         if (found.isPresent()) {
             throw new ApiRequestException("중복된 사용자 email(ID)가 존재합니다.");
         }
-
-        if(requestDto.getPassword().isEmpty() || requestDto.getPasswordConfirm().isEmpty()) {
-            throw new ApiRequestException("패스워드를 입력해 주세요.");
-        }
-
-        if(requestDto.getPassword().length() < 4 || requestDto.getPassword().length() > 20) {
-            throw new ApiRequestException("비밀번호는  4~20자리를 사용해야 합니다.");
-        }
-
-        if ( !(requestDto.getPassword().equals(requestDto.getPasswordConfirm()))){
-            throw new ApiRequestException("비밀번호가 서로같지않습니다.");
-        }
-
 
         // 패스워드 인코딩
         String password= passwordEncoder.encode(requestDto.getPassword());
