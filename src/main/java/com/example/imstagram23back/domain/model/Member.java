@@ -3,9 +3,12 @@ package com.example.imstagram23back.domain.model;
 import com.example.imstagram23back.domain.dto.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+
 
 @Setter
 @Getter // get 함수를 일괄적으로 만들어줍니다.
@@ -28,12 +31,6 @@ public class Member {
         this.role = MemberRole.USER;
     }
 
-//    public User(String username, String password, String email, Long kakaoId) {
-//        this.username = username;
-//        this.password = password;
-//        this.email = email;
-//        this.kakaoId = kakaoId;
-//    }
 
     // ID가 자동으로 생성 및 증가합니다.
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,9 +50,5 @@ public class Member {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private MemberRole role;
-
-//    @Column(nullable = true)
-//    private Long kakaoId;
-
 
 }
