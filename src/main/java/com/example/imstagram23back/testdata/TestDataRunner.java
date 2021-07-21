@@ -53,6 +53,15 @@ public class TestDataRunner implements ApplicationRunner {
         Post postTest2 = new Post("작가2","내용2",testMember1);
         postRepository.save(postTest2);
 
+        Post postTest3 = new Post("작가3","내용3",testMember1);
+        postRepository.save(postTest3);
+
+        Post postTest4 = new Post("작가4","내용4",testMember1);
+        postRepository.save(postTest4);
+
+        Post postTest5 = new Post("작가5","내용5",testMember1);
+        postRepository.save(postTest5);
+
         HeartLikeRequestDto heartLikeRequestDto1 = new HeartLikeRequestDto(testMember1, postTest1);
         HeartLike heartLikeTest1 = new HeartLike(heartLikeRequestDto1);
         heartLikeRepository.save(heartLikeTest1);

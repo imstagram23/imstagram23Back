@@ -40,6 +40,7 @@ public class MemberService {
     @Transactional
     public void registMember(SignupRequestDto requestDto){
         String email = requestDto.getEmail();
+        String nickname = requestDto.getNickname();
 
         if (memberRepository.existsByEmail(email)) {
             throw new ApiRequestException("이미 가입되어 있는 유저입니다");
@@ -49,6 +50,11 @@ public class MemberService {
         Optional<Member> found = memberRepository.findByEmail(email);
         if (found.isPresent()) {
             throw new ApiRequestException("중복된 사용자 email(ID)가 존재합니다.");
+        }
+
+        // 닉네임 중복확인
+        if(memberRepository.existsByNickname(nickname)){
+            throw  new ApiRequestException("이미 존재하는 닉네임입니다.");
         }
 
         // 패스워드 인코딩
