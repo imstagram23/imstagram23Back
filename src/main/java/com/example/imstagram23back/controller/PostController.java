@@ -1,9 +1,6 @@
 package com.example.imstagram23back.controller;
 
-import com.example.imstagram23back.domain.dto.PageResponseDto;
-import com.example.imstagram23back.domain.dto.PostRequestDto;
-import com.example.imstagram23back.domain.dto.PostResponseDto;
-import com.example.imstagram23back.domain.dto.PostResponseDto2;
+import com.example.imstagram23back.domain.dto.*;
 import com.example.imstagram23back.domain.model.Post;
 import com.example.imstagram23back.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +18,6 @@ import java.util.Map;
 * 2021-07-16 20:40 by 최민서
 */
 
-@RequestMapping("/api/post")
 @RequiredArgsConstructor
 @RestController
 public class PostController {
@@ -29,21 +25,21 @@ public class PostController {
     private final PostService postService;
 
     // Post 목록 최신순 조회
-    @GetMapping("")
+    @GetMapping("/api/post")
     public List<PostResponseDto2> getPostList2(@AuthenticationPrincipal UserDetails userDetails){
         return postService.getPostList2(userDetails.getUsername());
     }
 
 
     // Post 생성
-    @PostMapping(path="")
+    @PostMapping("/api/post")
     public PostResponseDto save(MultipartFile image, String content, @AuthenticationPrincipal UserDetails userDetails) {
 
         return postService.save(image, content, userDetails.getUsername());
     }
 
     // Post 삭제
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/post/{id}")
     public Map<String, Long> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
         postService.delete(id, userDetails.getUsername());
 
@@ -53,22 +49,35 @@ public class PostController {
     }
 
     // Post 수정
-    @PutMapping("/{id}")
+    @PutMapping("/api/post/{id}")
     public PostResponseDto update(@PathVariable Long id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
 
         return postService.update(id, requestDto, userDetails.getUsername());
     }
 
     // Post 하나 조회
-    @GetMapping("/{id}")
+    @GetMapping("/api/post/{id}")
     public PostResponseDto getPost(@PathVariable Long id){
         return postService.getPost(id);
     }
 
 
     // 페이지 인피니트 스크롤대비
-    @GetMapping("/page")
+    @GetMapping("/api/post/page")
     public PageResponseDto getPage(@RequestParam("page") int page, @AuthenticationPrincipal UserDetails userDetails){
         return postService.getPage(userDetails.getUsername(), page);
     }
+
+    // 유저페이지 조회
+    @GetMapping("/api/memberpage/{nickname}")
+    public MemberpageResponseDto getMemberPage(@PathVariable String nickname){
+        return postService.getMemberPage(nickname);
+    }
+
+    // 마이페이지 조회
+    @GetMapping("/api/mypage")
+    public MemberpageResponseDto getMyPage(@AuthenticationPrincipal UserDetails userDetails){
+        return postService.getMyPage(userDetails.getUsername());
+    }
+
 }

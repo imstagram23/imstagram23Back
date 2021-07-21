@@ -31,8 +31,8 @@ public class CommentController {
 
     // Comment 목록 조회
     @GetMapping("/api/comment/{postId}")
-    public List<CommentResponseDto> save(@PathVariable Long postId){
-        return commentService.getCommentList(postId);
+    public List<CommentResponseDto> save(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails){
+        return commentService.getCommentList(postId, userDetails.getUsername());
     }
 
     // Comment 삭제
@@ -51,7 +51,6 @@ public class CommentController {
     public CommentResponseDto update(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
 
         return commentService.update(commentId, requestDto, userDetails.getUsername());
-
     }
 
 

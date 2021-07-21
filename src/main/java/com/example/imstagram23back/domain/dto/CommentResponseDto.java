@@ -15,12 +15,16 @@ public class CommentResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private String writer;
+    private boolean checkMember;
 
-    public CommentResponseDto(Comment comment){
+    public CommentResponseDto(Comment comment, boolean checkMember){
         this.commentId = comment.getCommentId();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
+        this.writer = comment.getMember().getNickname();
+        this.checkMember = checkMember;
 
     }
 }

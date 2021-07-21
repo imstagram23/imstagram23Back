@@ -1,9 +1,6 @@
 package com.example.imstagram23back.service;
 
-import com.example.imstagram23back.domain.dto.PageResponseDto;
-import com.example.imstagram23back.domain.dto.PostRequestDto;
-import com.example.imstagram23back.domain.dto.PostResponseDto;
-import com.example.imstagram23back.domain.dto.PostResponseDto2;
+import com.example.imstagram23back.domain.dto.*;
 import com.example.imstagram23back.domain.model.Member;
 import com.example.imstagram23back.domain.model.Post;
 import com.example.imstagram23back.exception.ApiRequestException;
@@ -108,11 +105,7 @@ public class PostService {
 
     // 글자기가 쓴건지 확인하는거
     private boolean checkCreateMember(String memberEmail, Post post){
-        if(memberEmail.equals(post.getMember().getEmail())){
-            return true;
-        } else{
-            return false;
-        }
+        return memberEmail.equals(post.getMember().getEmail());
     }
 
 
@@ -208,5 +201,32 @@ public class PostService {
     }
 
 
+    // 유저페이지 조회
+    @Transactional
+    public MemberpageResponseDto getMemberPage(String nickname){
+        // 유저 조회
+        Member member = memberRepository.findByNickname(nickname).orElseThrow(
+                () -> new ApiRequestException("유저페이지 조회 중 해당 유저는 찾을 수 없습니다.")
+        );
+
+        // 유저의 게시글 조회
+        List<Post> postList = postRepository.findAllByMember(member);
+        List<String> imageList = postList.stream().map(post -> post.getImageUrl()).collect(Collectors.toList());
+        return new MemberpageResponseDto(member.getNickname(), imageList);
+    }
+
+    // 마이페이지 조회
+    @Transactional
+    public MemberpageResponseDto getMyPage(String userEmail){
+        // 유저 조회
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ApiRequestException("마이페이지 조회 중 해당 유저는 찾을 수 없습니다.")
+        );
+
+        // 유저의 게시글 조회
+        List<Post> postList = postRepository.findAllByMember(member);
+        List<String> imageList = postList.stream().map(post -> post.getImageUrl()).collect(Collectors.toList());
+        return new MemberpageResponseDto(member.getNickname(), imageList);
+    }
 
 }
