@@ -42,17 +42,23 @@ public class CommentService {
 
         // comment 저장
         Comment comment = new Comment(requestDto, member, post);
-        return new CommentResponseDto(commentRepository.save(comment));
+        return new CommentResponseDto(commentRepository.save(comment), true);
     }
 
     // Comment 목록 조회
     @Transactional(readOnly = true)
-    public List<CommentResponseDto> getCommentList(Long postId){
+    public List<CommentResponseDto> getCommentList(Long postId, String userEmail){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ApiRequestException("댓글을 확인할 글이 없습니다.")
         );
+        // 유저 조회
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ApiRequestException("유저가 아닙니다.")
+        );
+
         return commentRepository.findAllByPost(post).stream()
-                .map(comment->new CommentResponseDto(comment)).collect(Collectors.toList());
+                .map(comment->new CommentResponseDto(comment, comment.getMember().getNickname().equals(member.getNickname())))
+                .collect(Collectors.toList());
 
     }
 
@@ -94,7 +100,7 @@ public class CommentService {
         }
 
         comment.update(requestDto);
-        return new CommentResponseDto(comment);
+        return new CommentResponseDto(comment, true);
     }
 
 

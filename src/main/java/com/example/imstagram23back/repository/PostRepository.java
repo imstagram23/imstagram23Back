@@ -1,5 +1,6 @@
 package com.example.imstagram23back.repository;
 
+import com.example.imstagram23back.domain.model.Member;
 import com.example.imstagram23back.domain.model.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 //    Page findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page findAll(Pageable pageable);
+    List<Post> findAllByMember(Member member);
 }
