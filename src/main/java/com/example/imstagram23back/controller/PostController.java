@@ -1,10 +1,13 @@
 package com.example.imstagram23back.controller;
 
+import com.example.imstagram23back.domain.dto.PageResponseDto;
 import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto2;
+import com.example.imstagram23back.domain.model.Post;
 import com.example.imstagram23back.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +33,6 @@ public class PostController {
     public List<PostResponseDto2> getPostList2(@AuthenticationPrincipal UserDetails userDetails){
         return postService.getPostList2(userDetails.getUsername());
     }
-
 
 
     // Post 생성
@@ -64,4 +66,9 @@ public class PostController {
     }
 
 
+    // 페이지 인피니트 스크롤대비
+    @GetMapping("/page")
+    public PageResponseDto getPage(@RequestParam("page") int page, @AuthenticationPrincipal UserDetails userDetails){
+        return postService.getPage(userDetails.getUsername(), page);
+    }
 }

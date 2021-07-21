@@ -1,5 +1,6 @@
 package com.example.imstagram23back.service;
 
+import com.example.imstagram23back.domain.dto.PageResponseDto;
 import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto;
 import com.example.imstagram23back.domain.dto.PostResponseDto2;
@@ -12,6 +13,10 @@ import com.example.imstagram23back.repository.MemberRepository;
 import com.example.imstagram23back.repository.PostRepository;
 import com.example.imstagram23back.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,8 +51,8 @@ public class PostService {
     // 최왕규
     // 총 좋아요 개수도 반환해줄가
     @Transactional
-    public List<PostResponseDto2> getPostList2(String userEmail){
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(
+    public List<PostResponseDto2> getPostList2(String memberEmail){
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(
                 () -> new ApiRequestException("좋아요에서 글 불러올때 정확하지않은 이메일")
         );
 
@@ -64,6 +69,36 @@ public class PostService {
                     isAlreadLikeCheck(member, post), checkCreateMember(member.getEmail(), post)));
         }
         return result;
+    }
+
+    // 페이지로 조회
+    @Transactional
+    public PageResponseDto getPage(String memberEmail, int page ){
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(
+                () -> new ApiRequestException("좋아요에서 글 불러올때 정확하지않은 이메일")
+        );
+
+        Sort.Direction direction = Sort.Direction.DESC;
+        Sort sort = Sort.by(direction,"createdAt");
+        page = page - 1;
+        Pageable pageable = PageRequest.of(page, 5, sort );
+        Page pagelist = postRepository.findAll(pageable);
+
+        List<Post> postList = pagelist.getContent();
+        List<PostResponseDto2> result = postList.stream()
+                .map(post -> new PostResponseDto2(post, heartLikeRepository.countByPost(post),
+                commentRepository.countByPost(post),
+                isAlreadLikeCheck(member, post), checkCreateMember(member.getEmail(), post)))
+                .collect(Collectors.toList());
+
+        // getOffset()= 이전에 요소몇개, isFirst= 몇페이지인지, isLast = 마지막페이지인지
+        long offset = pagelist.getPageable().getOffset();
+        boolean fisrtCheck =  pagelist.isFirst();
+        boolean lastCheck = pagelist.isLast();
+//        pagelist.isEmpty(); 만약필요하다면 보내주는데 거기가 길이가 0 이면 처리할수있잖아...
+
+        PageResponseDto asd = new PageResponseDto(result, offset, fisrtCheck, lastCheck);
+        return asd;
     }
 
     // 계속 조회하는거라 비효율적이라 생각함 다른방법을 생각해보자.
@@ -171,4 +206,7 @@ public class PostService {
                 ()-> new ApiRequestException("해당 게시물이 없습니다. id = "+id));
         return new PostResponseDto(post);
     }
+
+
+
 }
