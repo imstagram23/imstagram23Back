@@ -5,9 +5,6 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-/*
- * 2021-07-19 14:40 by 최민서
- */
 
 @Getter
 public class CommentResponseDto {

@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
- * 2021-07-16 20:40 by 최민서
- */
+
 
 @RequiredArgsConstructor
 @Service

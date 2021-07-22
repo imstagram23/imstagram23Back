@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-/**
- * 07-16 21:36 by 최왕규
- */
+
 
 
 @AllArgsConstructor

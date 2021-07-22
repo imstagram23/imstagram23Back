@@ -9,9 +9,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
-/*
- * 2021-07-16 20:40 by 최민서
- */
+
 
 @Getter
 @MappedSuperclass

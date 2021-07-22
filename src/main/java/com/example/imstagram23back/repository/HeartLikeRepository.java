@@ -8,9 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * 2021-07-18 15:05 by 최왕규
- */
+
 
 public interface HeartLikeRepository extends JpaRepository<HeartLike, Long> {
     Optional<HeartLike> findByMemberAndPost(Member member, Post post);

@@ -12,9 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
- * 2021-07-19 14:40 by 최민서
- */
+
 
 @RequiredArgsConstructor
 @RestController
