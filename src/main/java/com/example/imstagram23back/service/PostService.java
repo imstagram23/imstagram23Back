@@ -79,14 +79,13 @@ public class PostService {
                         checkCreateMember(member.getEmail(), post)))
                 .collect(Collectors.toList());
 
-        // 이전에 요소가 몇개인지
+        // 지금 게시글 목록 이전에 이전 게시글이 몇개인지
         long offset = pagelist.getPageable().getOffset();
-        // 첫 페이지인지 여부
-        boolean fisrtCheck =  pagelist.isFirst();
-        // 마지막 페이지인지 여부
-        boolean lastCheck = pagelist.isLast();
 
-        return new PageResponseDto(result, offset, fisrtCheck, lastCheck);
+        // 남은 게시글이 있는지 여부
+        boolean next = !pagelist.isLast();
+
+        return new PageResponseDto(result, offset, next);
     }
 
     // 좋아요 여부 확인

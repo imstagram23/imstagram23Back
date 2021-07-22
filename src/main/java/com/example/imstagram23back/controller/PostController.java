@@ -59,9 +59,9 @@ public class PostController {
 
 
     // 페이지 인피니트 스크롤대비
-    @GetMapping("/api/post/page")
-    public PageResponseDto getPage(@RequestParam("page") int page, @AuthenticationPrincipal UserDetails userDetails){
-        return postService.getPage(userDetails.getUsername(), page);
+    @GetMapping("/api/post/page/{pageNum}")
+    public PageResponseDto getPage(@PathVariable int pageNum, @AuthenticationPrincipal UserDetails userDetails){
+        return postService.getPage(userDetails.getUsername(), pageNum);
     }
 
     // 유저페이지 조회
