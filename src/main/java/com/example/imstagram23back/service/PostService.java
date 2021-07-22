@@ -126,7 +126,7 @@ public class PostService {
         if(image == null || image.isEmpty()){ //.isEmpty()도 되는지 확인해보기
             throw new ApiRequestException("이미지는 반드시 있어야합니다.");
         }
-        if(StringUtils.hasText(content)){
+        if(!StringUtils.hasText(content)){
             throw new ApiRequestException("내용은 반드시 있어야합니다.");
         }
     }
