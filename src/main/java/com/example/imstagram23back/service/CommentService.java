@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
- * 2021-07-19 14:40 by 최민서
- */
+
 
 @RequiredArgsConstructor
 @Service

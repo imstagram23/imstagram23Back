@@ -14,9 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
-* 2021-07-16 20:40 by 최민서
-*/
+
 
 @RequiredArgsConstructor
 @RestController

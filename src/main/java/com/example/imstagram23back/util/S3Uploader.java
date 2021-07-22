@@ -20,9 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-/*
- * 2021-07-16 20:40 by 최민서
- */
+
 
 @Component
 public class S3Uploader {
