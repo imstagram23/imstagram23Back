@@ -2,6 +2,7 @@ package com.example.imstagram23back.service;
 
 
 import com.example.imstagram23back.domain.dto.HeartLikeRequestDto;
+import com.example.imstagram23back.domain.dto.HeartLikeResponseDto;
 import com.example.imstagram23back.domain.model.HeartLike;
 import com.example.imstagram23back.domain.model.Member;
 import com.example.imstagram23back.domain.model.Post;
@@ -22,7 +23,7 @@ public class HeartLikeService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Long heart(Long postId, String userEmail){
+    public HeartLikeResponseDto heart(Long postId, String userEmail){
         Member member = memberRepository.findByEmail(userEmail).orElseThrow(
                 () -> new ApiRequestException("좋아요기능에서 찾는 유저정보가 없습니다.")
         );
@@ -41,7 +42,7 @@ public class HeartLikeService {
             heartLikeRepository.deleteById(findLike.getHeartLikeId());
         }
 
-        return postId;
+        return new HeartLikeResponseDto(postId, heartLikeRepository.countByPost(post));
 
     }
 }

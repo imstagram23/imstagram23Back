@@ -1,6 +1,7 @@
 package com.example.imstagram23back.controller;
 
 
+import com.example.imstagram23back.domain.dto.HeartLikeResponseDto;
 import com.example.imstagram23back.service.HeartLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +17,7 @@ public class HeartLikeController {
     private final HeartLikeService heartLikeService;
 
     @PostMapping("/api/like/{postId}")
-    public Long postLike(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails){
+    public HeartLikeResponseDto postLike(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails){
         System.out.println("좋아요할시 ID 체크: "+ userDetails.getUsername());
 
         return heartLikeService.heart(postId, userDetails.getUsername());
