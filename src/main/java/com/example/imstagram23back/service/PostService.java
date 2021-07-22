@@ -79,14 +79,13 @@ public class PostService {
                         checkCreateMember(member.getEmail(), post)))
                 .collect(Collectors.toList());
 
-        // 이전에 요소가 몇개인지
+        // 지금 게시글 목록 이전에 이전 게시글이 몇개인지
         long offset = pagelist.getPageable().getOffset();
-        // 첫 페이지인지 여부
-        boolean fisrtCheck =  pagelist.isFirst();
-        // 마지막 페이지인지 여부
-        boolean lastCheck = pagelist.isLast();
 
-        return new PageResponseDto(result, offset, fisrtCheck, lastCheck);
+        // 남은 게시글이 있는지 여부
+        boolean next = !pagelist.isLast();
+
+        return new PageResponseDto(result, offset, next);
     }
 
     // 좋아요 여부 확인
@@ -127,7 +126,7 @@ public class PostService {
         if(image == null || image.isEmpty()){ //.isEmpty()도 되는지 확인해보기
             throw new ApiRequestException("이미지는 반드시 있어야합니다.");
         }
-        if(StringUtils.hasText(content)){
+        if(!StringUtils.hasText(content)){
             throw new ApiRequestException("내용은 반드시 있어야합니다.");
         }
     }

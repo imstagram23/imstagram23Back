@@ -49,7 +49,7 @@ public class Comment extends Timestamped {
     // 댓글 내용이 비었는지 확인
     public void contentBlankCheck(CommentRequestDto requestDto){
 
-        if(StringUtils.hasText(requestDto.getContent())){
+        if(!StringUtils.hasText(requestDto.getContent())){
             throw new ApiRequestException("내용은 반드시 있어야합니다.");
         }
     }

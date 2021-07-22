@@ -37,7 +37,7 @@ public class Post extends Timestamped {
     }
 
     public void update(PostRequestDto requestDto){
-        if(StringUtils.hasText(requestDto.getContent())){
+        if(!StringUtils.hasText(requestDto.getContent())){
             throw new ApiRequestException("내용은 반드시 있어야합니다.");
         }
         this.content = requestDto.getContent();
