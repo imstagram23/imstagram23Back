@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -36,31 +37,20 @@ public class PostService {
 
     // Post 목록 최신순 조회
     @Transactional
-    public List<PostResponseDto> getPostList(){
-
-        return postRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(post -> new PostResponseDto(post))
-                .collect(Collectors.toList());
-    }
-
-    // 최왕규
-    // 총 좋아요 개수도 반환해줄가
-    @Transactional
-    public List<PostResponseDto2> getPostList2(String memberEmail){
+    public List<PostPlusResponseDto> getPostList2(String memberEmail){
         Member member = memberRepository.findByEmail(memberEmail).orElseThrow(
                 () -> new ApiRequestException("좋아요에서 글 불러올때 정확하지않은 이메일")
         );
 
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
-        List<PostResponseDto2> result = new ArrayList<>();
+        List<PostPlusResponseDto> result = new ArrayList<>();
 
         for(int i = 0 ; i< postList.size() ; i++){
             Post post = postList.get(i);
-
             Long hearLikeTotal = heartLikeRepository.countByPost(post);
             Long totalComment = commentRepository.countByPost(post);
 
-            result.add(new PostResponseDto2(post,  hearLikeTotal, totalComment,
+            result.add(new PostPlusResponseDto(post,  hearLikeTotal, totalComment,
                     isAlreadLikeCheck(member, post), checkCreateMember(member.getEmail(), post)));
         }
         return result;
@@ -73,37 +63,38 @@ public class PostService {
                 () -> new ApiRequestException("좋아요에서 글 불러올때 정확하지않은 이메일")
         );
 
+        // 페이징 조회
         Sort.Direction direction = Sort.Direction.DESC;
         Sort sort = Sort.by(direction,"createdAt");
-        page = page - 1;
-        Pageable pageable = PageRequest.of(page, 5, sort );
+        Pageable pageable = PageRequest.of(page - 1, 5, sort );
         Page pagelist = postRepository.findAll(pageable);
 
+        // 페이징 결과 처리
         List<Post> postList = pagelist.getContent();
-        List<PostResponseDto2> result = postList.stream()
-                .map(post -> new PostResponseDto2(post,
+        List<PostPlusResponseDto> result = postList.stream()
+                .map(post -> new PostPlusResponseDto(post,
                         heartLikeRepository.countByPost(post),
                         commentRepository.countByPost(post),
                         isAlreadLikeCheck(member, post),
                         checkCreateMember(member.getEmail(), post)))
                 .collect(Collectors.toList());
 
-        // getOffset()= 이전에 요소몇개, isFirst= 몇페이지인지, isLast = 마지막페이지인지
+        // 이전에 요소가 몇개인지
         long offset = pagelist.getPageable().getOffset();
+        // 첫 페이지인지 여부
         boolean fisrtCheck =  pagelist.isFirst();
+        // 마지막 페이지인지 여부
         boolean lastCheck = pagelist.isLast();
-//        pagelist.isEmpty(); 만약필요하다면 보내주는데 거기가 길이가 0 이면 처리할수있잖아...
 
-        PageResponseDto asd = new PageResponseDto(result, offset, fisrtCheck, lastCheck);
-        return asd;
+        return new PageResponseDto(result, offset, fisrtCheck, lastCheck);
     }
 
-    // 계속 조회하는거라 비효율적이라 생각함 다른방법을 생각해보자.
+    // 좋아요 여부 확인
     private boolean isAlreadLikeCheck(Member member, Post post ){
         return heartLikeRepository.findByMemberAndPost(member, post).isPresent();
     }
 
-    // 글자기가 쓴건지 확인하는거
+    // 자신의 글인지 확인
     private boolean checkCreateMember(String memberEmail, Post post){
         return memberEmail.equals(post.getMember().getEmail());
     }
@@ -114,7 +105,7 @@ public class PostService {
     // Post 작성
     @Transactional
     public PostResponseDto save(MultipartFile image, String content, String userEmail){
-        isNullCheck(image, content);
+        postBlankCheck(image, content);
 
         // 유저 확인
         Member member = memberRepository.findByEmail(userEmail).orElseThrow(
@@ -130,13 +121,13 @@ public class PostService {
     }
 
     // 게시글 내용과 이미지가 있는지 확인
-    public void isNullCheck(MultipartFile image, String content){
+    public void postBlankCheck(MultipartFile image, String content){
         // 게시글 내용과 이미지는 필수
 
-        if(image == null){ //.isEmpty()도 되는지 확인해보기
+        if(image == null || image.isEmpty()){ //.isEmpty()도 되는지 확인해보기
             throw new ApiRequestException("이미지는 반드시 있어야합니다.");
         }
-        if(content.isEmpty()){
+        if(StringUtils.hasText(content)){
             throw new ApiRequestException("내용은 반드시 있어야합니다.");
         }
     }

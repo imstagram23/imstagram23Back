@@ -32,7 +32,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserDetails createUserDetails(Member member) {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getRole().toString());
 
-//        member.getEmail() -> member.getMemberId() 이렇게수정함
         return new User(
                 String.valueOf(member.getEmail()),
                 member.getPassword(),

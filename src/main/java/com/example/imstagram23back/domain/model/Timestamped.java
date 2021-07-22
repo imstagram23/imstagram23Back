@@ -15,10 +15,11 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
-
-    @CreatedDate // 최초 생성 시점
+    // 최초 생성 시점
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @LastModifiedDate // 마지막 변경 시점
+    // 마지막 변경 시점
+    @LastModifiedDate
     private LocalDateTime modifiedAt;
 }

@@ -57,18 +57,15 @@ public class MemberService {
 
         // 패스워드 인코딩
         String password= passwordEncoder.encode(requestDto.getPassword());
-        // 인코딩된거 안넣어주면 오류나서 이렇게했음
         requestDto.setPassword(password);
 
         Member member = new Member(requestDto);
         memberRepository.save(member);
 
-        // 코드정리시 삭제
-        System.out.println("유저 생성완료");
     }
 
 
-    @Transactional // 이거쓰는거맞낭
+    @Transactional
     public TokenDto loginMember(LoginRequestDto requestDto){
 
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
