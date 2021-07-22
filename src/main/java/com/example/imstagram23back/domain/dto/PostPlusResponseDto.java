@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class PostResponseDto2 {
+public class PostPlusResponseDto {
 
     private Long postId;
     private String writer;
@@ -20,7 +20,7 @@ public class PostResponseDto2 {
     private boolean heartLike;
     private boolean checkMember;
 
-    public PostResponseDto2(Post post, Long totalLike, Long totalComment, boolean heartLike, boolean checkMember ) { // int -> long
+    public PostPlusResponseDto(Post post, Long totalLike, Long totalComment, boolean heartLike, boolean checkMember ) { // int -> long
         this.postId = post.getPostId();
         this.content = post.getContent();
         this.imageUrl = post.getImageUrl();

@@ -12,11 +12,12 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    // 생성일자 기준 내림차순 정렬
+    // Post 최신순 정렬
     List<Post> findAllByOrderByCreatedAtDesc();
-
-    // Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
-//    Page findAllByOrderByCreatedAtDesc(Pageable pageable);
+    
+    // Post 페이징
     Page findAll(Pageable pageable);
+    
+    // 해당 멤버의 Post 조회 : 유저페이지/마이페이지에서 사용
     List<Post> findAllByMember(Member member);
 }

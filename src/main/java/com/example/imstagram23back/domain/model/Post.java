@@ -5,6 +5,7 @@ import com.example.imstagram23back.domain.dto.PostRequestDto;
 import com.example.imstagram23back.exception.ApiRequestException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
@@ -36,7 +37,7 @@ public class Post extends Timestamped {
     }
 
     public void update(PostRequestDto requestDto){
-        if(requestDto.getContent().isEmpty()){
+        if(StringUtils.hasText(requestDto.getContent())){
             throw new ApiRequestException("내용은 반드시 있어야합니다.");
         }
         this.content = requestDto.getContent();

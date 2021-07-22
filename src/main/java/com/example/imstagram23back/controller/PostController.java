@@ -1,10 +1,8 @@
 package com.example.imstagram23back.controller;
 
 import com.example.imstagram23back.domain.dto.*;
-import com.example.imstagram23back.domain.model.Post;
 import com.example.imstagram23back.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +22,7 @@ public class PostController {
 
     // Post 목록 최신순 조회
     @GetMapping("/api/post")
-    public List<PostResponseDto2> getPostList2(@AuthenticationPrincipal UserDetails userDetails){
+    public List<PostPlusResponseDto> getPostList2(@AuthenticationPrincipal UserDetails userDetails){
         return postService.getPostList2(userDetails.getUsername());
     }
 
