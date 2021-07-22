@@ -81,9 +81,11 @@ public class PostService {
 
         List<Post> postList = pagelist.getContent();
         List<PostResponseDto2> result = postList.stream()
-                .map(post -> new PostResponseDto2(post, heartLikeRepository.countByPost(post),
-                commentRepository.countByPost(post),
-                isAlreadLikeCheck(member, post), checkCreateMember(member.getEmail(), post)))
+                .map(post -> new PostResponseDto2(post,
+                        heartLikeRepository.countByPost(post),
+                        commentRepository.countByPost(post),
+                        isAlreadLikeCheck(member, post),
+                        checkCreateMember(member.getEmail(), post)))
                 .collect(Collectors.toList());
 
         // getOffset()= 이전에 요소몇개, isFirst= 몇페이지인지, isLast = 마지막페이지인지
