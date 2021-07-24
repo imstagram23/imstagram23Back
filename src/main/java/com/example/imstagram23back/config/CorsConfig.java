@@ -19,6 +19,7 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:3000");// 모든 ip에 응답을 허용하겠다. * -> http://localhost:3000
         config.addAllowedHeader("*");//모든 header에 응답을 허용하겠다.
 
+
         config.addAllowedMethod("OPTIONS");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
